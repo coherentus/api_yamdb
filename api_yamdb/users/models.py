@@ -7,10 +7,11 @@ CHOISES = (('admin', 'Администратор'),
            ('anon', 'Аноним'),
            ('superuser', 'Суперюзер Django'))
 
+
 class User(AbstractUser):
     bio = models.TextField(
         'Биография',
         blank=True,
     )
     role = models.CharField('Роль', max_length=20,
-                             choices=CHOISES, default='user')
+                            choices=CHOISES, default='user')
