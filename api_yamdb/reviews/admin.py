@@ -1,9 +1,3 @@
-"""Отладочный файл для web-админки django.
-
-Для контроля импорта из csv. По заданию не требуется,
-перед ревью надо удалить
-"""
-
 from django.contrib import admin
 from reviews.models import Category, Comment, Genre, Review, Title
 
@@ -19,8 +13,10 @@ class GenreInstanceInline(admin.TabularInline):
 class TitlesInstanceInline(admin.TabularInline):
     model = Title
 
+
 class TitleGenreInline(admin.TabularInline):
     model = Title.genre.through
+
 
 class ReviewsInstanceInline(admin.TabularInline):
     model = Review

@@ -1,3 +1,4 @@
+'''
 from django.core.management.base import BaseCommand
 
 from ._csv_tools import import_from_csv
@@ -39,3 +40,4 @@ class Command(BaseCommand):
 
         # делаем работу
         import_from_csv(path)
+'''

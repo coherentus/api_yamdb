@@ -1,8 +1,6 @@
-from pytils.translit import slugify
-
 from django.db import models
 from django.utils import timezone
-
+from pytils.translit import slugify
 from users.models import User
 
 
