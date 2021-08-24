@@ -80,7 +80,6 @@ Security Scheme Type: `API Key`
 
 Header parameter name: `Bearer`
 ***
-AUTH
 
 Описание эндпоинтов:
 
@@ -90,7 +89,7 @@ AUTH
 - [Titles](api_yamdb/static/readme_files/README_Titles.md)
 - [Reviews](api_yamdb/static/readme_files/README_Reviews.md)
 - [Comments](api_yamdb/static/readme_files/README_Comments.md)
-
+- [Users](api_yamdb/static/readme_files/README_Users.md)
 
 *Импорт csv-файлов*
 
