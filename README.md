@@ -77,6 +77,7 @@ python3 manage.py runserver
 - [Genres](api_yamdb/static/readme_files/README_Genres.md)
 - [Titles](api_yamdb/static/readme_files/README_Titles.md)
 - [Reviews](api_yamdb/static/readme_files/README_Reviews.md)
+- [Comments](api_yamdb/static/readme_files/README_Comments.md)
 
 ### Примеры запросов
 ### USERS
