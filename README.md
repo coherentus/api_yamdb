@@ -73,10 +73,10 @@ python3 manage.py runserver
 
 Описание эндпоинтов:
 
-- [Categories](README_Categories.md)
-- [Genres](README_Genres.md)
-- [Titles](README_Titles.md)
-- [Reviews](README_Reviews.md)
+- [Categories](api_yamdb/static/readme_files/README_Categories.md)
+- [Genres](api_yamdb/static/readme_files/README_Genres.md)
+- [Titles](api_yamdb/static/readme_files/README_Titles.md)
+- [Reviews](api_yamdb/static/readme_files/README_Reviews.md)
 
 ### Примеры запросов
 ### USERS
