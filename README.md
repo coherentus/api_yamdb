@@ -70,9 +70,21 @@ python3 manage.py runserver
 - **Модератор** (`moderator`) — те же права, что и у **Аутентифицированного пользователя** плюс право удалять **любые** отзывы и комментарии.
 - **Администратор** (`admin`) — полные права на управление всем контентом проекта. Может создавать и удалять произведения, категории и жанры. Может назначать роли пользователям.
 - **Суперюзер Django** — обладет правами администратора (`admin`)
+***
+### Authentication
+jwt-token
+
+Используется аутентификация с использованием JWT-токенов
+
+Security Scheme Type: `API Key`
+
+Header parameter name: `Bearer`
+***
+AUTH
 
 Описание эндпоинтов:
 
+- [Auth](api_yamdb/static/readme_files/README_Auth.md)
 - [Categories](api_yamdb/static/readme_files/README_Categories.md)
 - [Genres](api_yamdb/static/readme_files/README_Genres.md)
 - [Titles](api_yamdb/static/readme_files/README_Titles.md)
