@@ -6,7 +6,7 @@
 **Права доступа:** Доступно без токена
 
 #### url:
-![GET](png/get.png)
+![GET](../png/get.png)
 ```
 /api/v1/titles/
 ```
@@ -48,7 +48,7 @@
 *Примечание: При добавлении нового произведения требуется указать уже существующие категорию и жанр.*
 
 #### url:
-![POST](png/post.png)
+![POST](../png/post.png)
 ```
 /api/v1/titles/
 ```
@@ -82,7 +82,7 @@
 
 **Права доступа:** Доступно без токена
 #### url:
-![GET](png/get.png)
+![GET](../png/get.png)
 ```
 /api/v1/titles/{titles_id}/
 ```
@@ -117,7 +117,7 @@
 
 
 #### url:
-![PATCH](png/patch.png)
+![PATCH](../png/patch.png)
 ```
 /api/v1/titles/{titles_id}/
 ```
@@ -143,7 +143,7 @@
 Удалить произведение.
 **Права доступа:** Администратор.
 #### url:
-![DELETE](png/delete.png)
+![DELETE](../png/delete.png)
 ```
 /api/v1/titles/{titles_id}/
 ```
@@ -154,4 +154,4 @@
 `403 Нет прав доступа`
 `404 Категория не найдена`
 
-[Назад](README.md)
+[Назад](../../../README.md)
