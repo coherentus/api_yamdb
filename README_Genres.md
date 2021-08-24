@@ -6,7 +6,7 @@
 **Права доступа:** Доступно без токена
 
 #### url:
-![GET](get.png)
+![GET](png/get.png)
 ```
 /api/v1/genres/
 ```
@@ -39,7 +39,7 @@
 *Примечание: Поле slug каждого жанра должно быть уникальным.*
 
 #### url:
-![POST](post.png)
+![POST](png/post.png)
 ```
 /api/v1/genres/
 ```
@@ -69,7 +69,7 @@
 **Права доступа:** Администратор.
 
 #### url:
-![DELETE](delete.png)
+![DELETE](png/delete.png)
 ```
 /api/v1/genres/{slug}/
 ```
