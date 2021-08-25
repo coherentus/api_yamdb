@@ -1,7 +1,7 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers, status
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ParseError, ValidationError
 from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
 from datetime import datetime as dt
@@ -136,6 +136,21 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Review
+
+    def validate(self, data):
+        title_id = (
+            self.context['request'].parser_context['kwargs']['title_id']
+        )
+        title = get_object_or_404(Title, pk=title_id)
+        user = self.context['request'].user
+        if (
+            self.context['request'].method == 'POST'
+            and Review.objects.filter(author=user, title=title).exists()
+        ):
+            raise ParseError(
+                'Возможен только один отзыв на произведение!'
+            )
+        return data
 
 
 class CommentSerializer(serializers.ModelSerializer):
