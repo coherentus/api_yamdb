@@ -3,12 +3,14 @@ from django.db import models
 
 
 class User(AbstractUser):
+    USER = 'user'
+    ADMIN = 'admin'
+    MODERATOR = 'moderator'
+
     CHOISES = (
-        ('admin', 'Администратор'),
-        ('user', 'Аутентифицированный пользователь'),
-        ('moderator', 'Модератор'),
-        ('anon', 'Аноним'),
-        ('superuser', 'Суперюзер Django')
+        (ADMIN, 'Администратор'),
+        (USER, 'Аутентифицированный пользователь'),
+        (MODERATOR, 'Модератор'),
     )
 
     bio = models.TextField(
@@ -20,3 +22,15 @@ class User(AbstractUser):
 
     class Meta:
         ordering = ('role',)
+
+    @property
+    def is_moderator(self):
+        return self.role == User.MODERATOR
+
+    @property
+    def is_admin(self):
+        return self.role == User.ADMIN
+
+    @property
+    def is_user(self):
+        return self.role == User.USER

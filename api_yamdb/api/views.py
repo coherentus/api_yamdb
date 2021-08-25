@@ -124,23 +124,20 @@ class UsersViewSet(viewsets.ModelViewSet):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def signup(request):
-    if request.method == 'POST':
-        serializer = SignUpSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            if not User.objects.filter(username=request.data['username'],
-                                       email=request.data['email']).exists():
-                serializer.save()
-            user = User.objects.get(username=request.data['username'],
-                                    email=request.data['email'])
-            conformation_code = default_token_generator.make_token(user)
-            send_mail(f'Hello, {str(user.username)}! Your code is here!',
-                      conformation_code,
-                      'donotrespond@yamdb.com',
-                      [request.data['email']],
-                      fail_silently=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    serializer = SignUpSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    if not User.objects.filter(username=request.data['username'],
+                               email=request.data['email']).exists():
+        serializer.save()
+    user = User.objects.get(username=request.data['username'],
+                            email=request.data['email'])
+    conformation_code = default_token_generator.make_token(user)
+    send_mail(f'Hello, {str(user.username)}! Your code is here!',
+              conformation_code,
+              'donotrespond@yamdb.com',
+              [request.data['email']],
+              fail_silently=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 def get_tokens_for_user(user):
@@ -155,19 +152,16 @@ def get_tokens_for_user(user):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def token(request):
-    if request.method == 'POST':
-        serializer = TokenSerializer(data=request.data)
-        if serializer.is_valid():
-            user = get_object_or_404(User, username=request.data['username'])
-            confirmation_code = request.data['confirmation_code']
-            if default_token_generator.check_token(user, confirmation_code):
-                token = get_tokens_for_user(user)
-                response = {'token': str(token['access'])}
-                return Response(response, status=status.HTTP_200_OK)
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    serializer = TokenSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    user = get_object_or_404(User, username=request.data['username'])
+    confirmation_code = request.data['confirmation_code']
+    if default_token_generator.check_token(user, confirmation_code):
+        token = get_tokens_for_user(user)
+        response = {'token': str(token['access'])}
+        return Response(response, status=status.HTTP_200_OK)
+    return Response(serializer.errors,
+                    status=status.HTTP_400_BAD_REQUEST)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
