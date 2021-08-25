@@ -3,6 +3,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer
+from datetime import datetime as dt
+
 from reviews.models import Category, Comment, Genre, Review, Title, User
 from users.models import User
 from .validators import validate_username, validate_email
@@ -31,6 +33,12 @@ class TitleSerializer(ModelSerializer):
         model = Title
         fields = ('id', 'name', 'year', 'description', 'rating',
                   'category', 'genre')
+
+    def validate_year(self, value):
+        year_today = dt.date.today().year
+        if value > year_today:
+            raise serializers.ValidationError('Проверьте год создания!')
+        return value
 
 
 class TitlePostSerializer(serializers.ModelSerializer):
