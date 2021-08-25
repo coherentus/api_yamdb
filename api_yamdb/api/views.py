@@ -2,8 +2,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from django_filters.rest_framework import (CharFilter, DjangoFilterBackend,
-                                           FilterSet)
+from django_filters.rest_framework import (DjangoFilterBackend,)
 from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.exceptions import ParseError
@@ -14,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from reviews.models import Category, Comment, Genre, Review, Title, User
 from users.models import User
+from api.filters import FilterTitle
 
 from .permissions import (AdminOnly, AdminOrReadOnly, IsAuthorOrModerOrAdmin,
                           OnlyOwnAccount)
@@ -22,16 +22,6 @@ from .serializers import (CategorySerializer, CommentSerializer,
                           ReviewSerializer, SignUpSerializer,
                           TitlePostSerializer, TitleSerializer,
                           TokenSerializer)
-
-
-class FilterTitle(FilterSet):
-    category = CharFilter(field_name='category__slug', lookup_expr='icontains')
-    genre = CharFilter(field_name='genre__slug', lookup_expr='icontains')
-    name = CharFilter(field_name='name', lookup_expr='icontains')
-
-    class Meta:
-        model = Title
-        fields = ['year']
 
 
 class CreateListDestroy(mixins.CreateModelMixin,
@@ -62,12 +52,6 @@ class TitleViewSet(viewsets.ModelViewSet):
                         order_by('name'))
             return queryset
         return Title.objects.all()
-
-    def perform_create(self, serializer):
-        return super().perform_create(serializer)
-
-    def perform_update(self, serializer):
-        return super().perform_update(serializer)
 
 
 class GenreViewSet(CreateListDestroy):
