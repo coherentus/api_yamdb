@@ -5,7 +5,6 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import (DjangoFilterBackend,)
 from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
-from rest_framework.exceptions import ParseError
 from rest_framework.pagination import (LimitOffsetPagination,
                                        PageNumberPagination)
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -153,11 +152,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = (IsAuthorOrModerOrAdmin,)
 
-    def title_rating_update(self, title_id):
-        title = get_object_or_404(Title, pk=title_id)
-        rating = title.reviews.aggregate(Avg('score'))
-        return round(rating['score__avg'])
-
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
         new_queryset = title.reviews.all()
@@ -165,16 +159,11 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
-        if title.reviews.filter(author=self.request.user).exists():
-            raise ParseError(
-                'Возможен только один отзыв на произведение!'
-            )
+
         serializer.save(
             author=self.request.user,
-            title_id=title.id
+            title=title
         )
-        title.rating = self.title_rating_update(title.id)
-        title.save()
 
     def perform_update(self, serializer):
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
@@ -185,14 +174,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
             author=author,
             title_id=title.id
         )
-        title.rating = self.title_rating_update(title.id)
-        title.save()
-
-    def perform_destroy(self, instance):
-        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
-        instance.delete()
-        title.rating = self.title_rating_update(title.id)
-        title.save()
 
 
 class CommentViewSet(viewsets.ModelViewSet):
