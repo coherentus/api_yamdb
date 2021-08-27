@@ -2,7 +2,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from django_filters.rest_framework import (DjangoFilterBackend,)
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.pagination import (LimitOffsetPagination,
@@ -12,8 +12,9 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from reviews.models import Category, Comment, Genre, Review, Title, User
 from users.models import User
-from api.filters import FilterTitle
 
+from api.filters import FilterTitle
+from django.conf import settings
 from .permissions import (AdminOnly, AdminOrReadOnly, IsAuthorOrModerOrAdmin,
                           OnlyOwnAccount)
 from .serializers import (CategorySerializer, CommentSerializer,
@@ -91,17 +92,15 @@ class UsersViewSet(viewsets.ModelViewSet):
         if request.method == 'GET':
             serializer = self.get_serializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        if request.method == 'PATCH':
-            serializer = self.get_serializer(user,
-                                             data=request.data, partial=True)
-            if serializer.is_valid():
-                if 'role' in request.data:
-                    if user.role != 'user':
-                        serializer.save()
-                else:
+        serializer = self.get_serializer(user,
+                                         data=request.data, partial=True)
+        if serializer.is_valid():
+            if 'role' in request.data:
+                if user.role != 'user':
                     serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -117,7 +116,7 @@ def signup(request):
     conformation_code = default_token_generator.make_token(user)
     send_mail(f'Hello, {str(user.username)}! Your code is here!',
               conformation_code,
-              'donotrespond@yamdb.com',
+              settings.EMAIL_FOR_AUTH_LETTERS,
               [request.data['email']],
               fail_silently=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
