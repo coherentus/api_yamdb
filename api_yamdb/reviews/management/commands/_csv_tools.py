@@ -1,4 +1,3 @@
-'''
 import csv
 
 from django.apps import apps
@@ -254,5 +253,3 @@ def import_from_csv(path_csv=None, models_files=None, matrix=None):
 
 def export_to_csv():
     pass
-
-'''
