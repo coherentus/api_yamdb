@@ -1,7 +1,6 @@
-'''
 from django.core.management.base import BaseCommand
 
-from ._csv_tools import import_from_csv
+from ._csv_tools import import_from_csv_1, import_from_csv_2
 
 
 class Command(BaseCommand):
@@ -39,5 +38,5 @@ class Command(BaseCommand):
             self.stdout.write('Путь до csv не задан')
 
         # делаем работу
-        import_from_csv(path)
-'''
+        import_from_csv_1(path)
+        import_from_csv_2(path)

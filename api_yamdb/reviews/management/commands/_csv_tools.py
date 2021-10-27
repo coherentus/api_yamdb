@@ -1,10 +1,8 @@
-'''
 import csv
 
 from django.apps import apps
 from django.conf import settings
 from django.db.models import Avg
-
 
 BASE_DIR = settings.BASE_DIR
 
@@ -128,7 +126,62 @@ for model in MODEL_LIST:
     MODEL_LINKS[model_key] = model_link
 
 
-def import_from_csv(path_csv=None, models_files=None, matrix=None):
+def import_file(file_name, file_struct, model):
+    with open(file_name, encoding='utf-8') as r_file:
+        file_reader = csv.reader(r_file, delimiter=",")
+        count = 0
+        obj_count = 0
+
+        for row in file_reader:
+            # В данных файлах csv первая строка информационная
+            if count == 0:
+                print(f'Файл содержит столбцы: {", ".join(row)}')
+                # Названия полей в файле
+                file_fields = row
+                # имена полей для бд
+                bd_fields = list()
+                # функции для связанных полей
+                func_fields = list()
+                for field_name in file_fields:
+                    bd_fields.append(field_name.replace('_id', ''))
+                    bd_name = file_struct[1][field_name]
+                    if len(bd_name.split('.id')) == 2:
+                        # имя поля БД из матрицы - '_id' == Model
+                        rel_model_name = bd_name.split('.id')[0]
+                        # ссылка на модель
+                        rel_model = MODEL_LINKS[rel_model_name]
+                        func_fields.append(rel_model)
+                    else:
+                        func_fields.append(None)
+            else:
+                # Значения полей файла
+                line_fields = row
+                # формируем словарь полей для записи в БД
+                # {<имя поля>:
+                # [<значение из текущей строки> или <функция>]}
+                object_fields = dict()
+                for e in range(len(row)):
+                    if func_fields[e]:
+                        object_fields[bd_fields[e]], _ = \
+                            func_fields[e].objects.get_or_create(
+                                pk=line_fields[e])
+                    else:
+                        object_fields[bd_fields[e]] = line_fields[e]
+
+                try:
+                    # ссылка на модель
+                    model_link = MODEL_LINKS[model]
+                    model_link.objects.create(**object_fields)
+                    obj_count += 1
+                except Exception as e:
+                    print(f'Ошибка создания записи: {e}')
+                    exit
+            count += 1
+        print(f'Всего в файле {count} строк.',
+              f'В БД добавлено {obj_count} записей.')
+
+
+def import_from_csv_1(path_csv=None):
     """Импорт в БД данных из файлов .csv.
 
     Принимает путь до файлов и матрицу импорта типа список.
@@ -138,10 +191,7 @@ def import_from_csv(path_csv=None, models_files=None, matrix=None):
     """
     if path_csv is None:
         path_csv = PATH_CSV
-    if models_files is None:
-        models_files = MODELS_FILES
-    if matrix is None:
-        matrix = IMPORT_MATRIX
+    matrix = IMPORT_MATRIX
 
     for model_file in matrix:
         model, file_struct = model_file
@@ -149,60 +199,12 @@ def import_from_csv(path_csv=None, models_files=None, matrix=None):
             (BASE_DIR, path_csv, file_struct[0], CSV_EXT)
         )
         print('\n\nВзят в работу файл: ', file_name)
+        import_file(file_name, file_struct, model)
 
-        with open(file_name, encoding='utf-8') as r_file:
-            file_reader = csv.reader(r_file, delimiter=",")
-            count = 0
-            obj_count = 0
 
-            for row in file_reader:
-                # В данных файлах csv первая строка информационная
-                if count == 0:
-                    print(f'Файл содержит столбцы: {", ".join(row)}')
-                    # Названия полей в файле
-                    file_fields = row
-                    # имена полей для бд
-                    bd_fields = list()
-                    for field_name in file_fields:
-                        bd_fields.append(field_name.replace('_id', ''))
-                    # функции для связанных полей
-                    func_fields = list()
-                    for field_name in file_fields:
-                        bd_name = file_struct[1][field_name]
-                        if len(bd_name.split('.id')) == 2:
-                            # имя поля БД из матрицы - '_id' == Model
-                            rel_model_name = bd_name.split('.id')[0]
-                            # ссылка на модель
-                            rel_model = MODEL_LINKS[rel_model_name]
-                            func_fields.append(rel_model)
-                        else:
-                            func_fields.append(None)
-                else:
-                    # Значения полей файла
-                    line_fields = row
-                    # формируем словарь полей для записи в БД
-                    # {<имя поля>:
-                    # [<значение из текущей строки> или <функция>]}
-                    object_fields = dict()
-                    for e in range(len(row)):
-                        if func_fields[e]:
-                            object_fields[bd_fields[e]], _ = \
-                                func_fields[e].objects.get_or_create(
-                                    pk=line_fields[e])
-                        else:
-                            object_fields[bd_fields[e]] = line_fields[e]
-
-                    try:
-                        # ссылка на модель
-                        model_link = MODEL_LINKS[model]
-                        model_link.objects.create(**object_fields)
-                        obj_count += 1
-                    except Exception as e:
-                        print(f'Ошибка создания записи: {e}')
-                        exit
-                count += 1
-            print(f'Всего в файле {count} строк.',
-                  f'В БД добавлено {obj_count} записей.')
+def import_from_csv_2(path_csv=None):
+    if path_csv is None:
+        path_csv = PATH_CSV
 
     # файл genre_title для текущего поля ManyToMany Title.genre
     model, file_struct = TITLE_GENRE_MATRIX
@@ -254,5 +256,3 @@ def import_from_csv(path_csv=None, models_files=None, matrix=None):
 
 def export_to_csv():
     pass
-
-'''
