@@ -145,6 +145,8 @@ http://127.0.0.1:8000/admin
 ```
 ***
 
+[](#Описание)
+
 ### Описание эндпоинтов:
 
 - [Auth](api_yamdb/static/readme_files/README_Auth.md)
